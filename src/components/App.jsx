@@ -29,7 +29,7 @@ export class App extends Component {
 
     if (prevState.contacts.length > contacts.length) Notiflix.Notify.failure('Contact deleted successfully');
   }
-
+ 
   handleFormSubmit = ({ name, number }) => {  
 
   if (this.state.contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase())) {
