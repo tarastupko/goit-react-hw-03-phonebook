@@ -4,12 +4,30 @@ import { ContactList } from "./ContactList/ContactList";
 import Notiflix from 'notiflix';
 import { Filter } from "./Filter/Filter";
 import { nanoid } from 'nanoid'
+import * as storage from "./storages/storage"
+import * as storageKeys from "./storages/storageKeys";
+
 
 export class App extends Component {
 
   state = {
   contacts: [],
   filter: '',
+  }
+
+    componentDidMount() {
+    if (localStorage.getItem(storageKeys.CONTACTS)) {
+      this.setState({contacts: storage.load(storageKeys.CONTACTS)})
+    }
+    }
+  
+    componentDidUpdate(_, prevState) {
+    const {contacts} = this.state
+    if (prevState.contacts !== contacts) {
+      storage.save(storageKeys.CONTACTS, this.state.contacts)
+    }
+
+    if (prevState.contacts.length > contacts.length) Notiflix.Notify.failure('Contact deleted successfully');
   }
 
   handleFormSubmit = ({ name, number }) => {  
