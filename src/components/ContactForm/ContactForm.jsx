@@ -1,51 +1,50 @@
 import React, { Component } from "react";
-import { Button, Form, Input } from './ContactForm.styled';
-import Notiflix from 'notiflix';
 import PropTypes from 'prop-types';
 
-export class ContactForm extends Component {
+import { Button, Form, Input, Label } from './ContactForm.styled'; 
+import Notiflix from 'notiflix';
 
+export class ContactForm extends Component {
   state = {
     name: '',
     number: '',
-
   }
 
-    handleChange = ({ target }) => {
+  handleChange = ({ target }) => {
     this.setState({
       [target.name]: target.value
-    })
-
+    });
   }
 
   onSubmit = (e) => {
     e.preventDefault();
 
     if (!this.state.name.trim() && !this.state.number.trim()) {
-      Notiflix.Notify.failure('Input is Empty !')
-      return
+      Notiflix.Notify.failure('Input is Empty !');
+      return;
     }
 
     this.props.onSubmit(this.state);
+    this.setState({ name: '', number: '' }); 
   }
 
   render() {
-  return (
+    return (
       <Form onSubmit={this.onSubmit}>
         <div>
-          <label htmlFor="name">Name</label>
-          <Input
-            id="name"
-            type="text"
-            name="name"
-            pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-            title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-            required
-            onChange={this.handleChange}
-            value={this.state.name}
-          />
-          <label htmlFor="tel">Number</label>
-          <Input
+          <Label htmlFor="name">Name</Label>
+<Input
+  id="name"
+  type="text"
+  name="name"
+  pattern="^[a-zA-Zа-яА-Я' ]+$"
+  title="Name may contain only letters, apostrophe, and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
+  required
+  onChange={this.handleChange}
+  value={this.state.name}
+/>
+          <Label htmlFor="tel">Number</Label>
+ <Input
             id="tel"
             type="tel"
             name="number"
@@ -56,15 +55,14 @@ export class ContactForm extends Component {
             value={this.state.number}
           />
           <Button type="submit">Add contact</Button>
-          </div>
-          </Form>
-           );
+        </div>
+      </Form>
+    );
   }
-  
 }
-
-export default ContactForm;
 
 ContactForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
+
+export default ContactForm;

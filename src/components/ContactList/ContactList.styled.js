@@ -1,25 +1,32 @@
 import styled from 'styled-components';
 
 export const List = styled.ul`
-max-width: 500px;
-padding: 0;
+  list-style-type: none;
+  padding: 0;
+  text-align: center; /* Вирівнюємо список по центру */
+  max-width: 400px; /* Задаємо максимальну ширину, як у форми */
+  margin: 0 auto; /* Центруємо список горизонтально */
+`;
 
-& li {
-  display:flex;
-  flex-wrap: wrap;
-  align-items: baseline;
+export const ListItem = styled.li`
+  display: flex;
   justify-content: space-between;
-  background-color: #dadbe3;
-  padding: 15px 15px ;
-  &:nth-child(even) {
-  background-color: transparent;
-}
-  & div {
-  display:flex;
-  flex-wrap: wrap;
-  & p+p {
-  margin-left: 5px;
-  }
-}
-}
-`
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-align: left;
+`;
+
+export const ContactInfo = styled.div`
+  flex-grow: 1;
+`;
+
+export const ContactName = styled.p`
+  font-weight: bold;
+`;
+
+export const ContactNumber = styled.p`
+  color: #555;
+`;

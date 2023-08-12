@@ -1,87 +1,117 @@
 import React, { Component } from "react";
 import ContactForm from "./ContactForm/ContactForm";
 import { ContactList } from "./ContactList/ContactList";
-import Notiflix from 'notiflix';
 import { Filter } from "./Filter/Filter";
+import Notiflix from 'notiflix';
 import { nanoid } from 'nanoid'
-import * as storage from "./storages/storage"
+import DataManager from "./storages/storage"
 import * as storageKeys from "./storages/storageKeys";
-
-
+import { H2Style } from './App.styled';
 export class App extends Component {
-
-  state = {
-  contacts: [],
-  filter: '',
+  constructor(props) {
+    super(props);
+    this.dataManager = new DataManager();
+    this.state = {
+      contacts: [],
+      filter: '',
+    };
   }
 
-    componentDidMount() {
-    if (localStorage.getItem(storageKeys.CONTACTS)) {
-      this.setState({contacts: storage.load(storageKeys.CONTACTS)})
-    }
-    }
-  
-    componentDidUpdate(_, prevState) {
-    const {contacts} = this.state
+  componentDidMount() {
+    this.loadContactsFromStorage();
+  }
+
+  componentDidUpdate(_, prevState) {
+    const { contacts } = this.state;
     if (prevState.contacts !== contacts) {
-      storage.save(storageKeys.CONTACTS, this.state.contacts)
+      this.saveContactsToStorage();
     }
 
-    if (prevState.contacts.length > contacts.length) Notiflix.Notify.failure('Contact deleted successfully');
+    if (prevState.contacts.length > contacts.length) {
+      this.showDeleteNotification();
+    }
   }
- 
-  handleFormSubmit = ({ name, number }) => {  
 
-  if (this.state.contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase())) {
-    Notiflix.Notify.info(`${name} is already in contcts`)
-    return
+  loadContactsFromStorage() {
+    const storedContacts = this.dataManager.load(storageKeys.CONTACTS);
+    if (storedContacts) {
+      this.setState({ contacts: storedContacts });
+    }
+  }
+
+  saveContactsToStorage() {
+    this.dataManager.save(storageKeys.CONTACTS, this.state.contacts);
+  }
+
+  showDeleteNotification() {
+    Notiflix.Notify.failure('Contact deleted successfully');
+  }
+
+  handleFormSubmit = ({ name, number }) => {
+    if (this.isContactAlreadyExists(name)) {
+      this.showInfoNotification(`${name} is already in contacts`);
+      return;
+    }
+
+    const newContact = {
+      name,
+      number,
+      id: nanoid()
+    };
+
+    this.addContact(newContact);
+    this.showSuccessNotification('Contact was added successfully');
   };
 
-  const newContact = {
-    name: name,
-    number: number,
-    id: nanoid()
-  };
+  isContactAlreadyExists(name) {
+    return this.state.contacts.some(contact => contact.name.toLowerCase() === name.toLowerCase());
+  }
 
-  this.setState(prevState => ({
-    contacts: [...prevState.contacts, newContact],
-  }));
+  showInfoNotification(message) {
+    Notiflix.Notify.info(message);
+  }
 
-  Notiflix.Notify.success('Contact was added successfully');
-  };
+  addContact(newContact) {
+    this.setState(prevState => ({
+      contacts: [...prevState.contacts, newContact],
+    }));
+  }
+
+  showSuccessNotification(message) {
+    Notiflix.Notify.success(message);
+  }
 
   handleFilter = ({ target }) => {
-    this.setState({ filter: target.value })
+    this.setState({ filter: target.value });
   }
 
-  getFilteredContacts = () => {
-    const { filter, contacts } = this.state 
-    
-    const normilizedFilterValue = filter.toLowerCase();
-    return contacts.filter(
-      contact => contact.name.toLowerCase().includes(normilizedFilterValue)
+  getFilteredContacts() {
+    const { filter, contacts } = this.state;
+    const normalizedFilterValue = filter.toLowerCase();
+    return contacts.filter(contact => contact.name.toLowerCase().includes(normalizedFilterValue));
+  }
+
+  onDeleteBtn = (id) => {
+    this.removeContact(id);
+  }
+
+  removeContact(id) {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== id),
+    }));
+  }
+
+  render() {
+    return (
+      <>
+        <div>
+          <H2Style>Phonebook</H2Style>
+          <ContactForm onSubmit={this.handleFormSubmit}/>
+          <H2Style>Contacts</H2Style>
+          <Filter filter={this.state.filter} handleFilter={this.handleFilter} />
+          <ContactList contacts={this.getFilteredContacts()} onDeleteBtn={this.onDeleteBtn} />
+        </div>
+      </>
     );
   }
-  
-  onDeleteBtn = (id) => {
-    this.setState(prevState => ({
-      contacts: [...prevState.contacts.filter(contact => contact.id !== id)],
-    }))
-  }
-
-render() {
-  return (
-    <>
-      <div>
-        <h2>Phonebook</h2>
-      
-        <ContactForm onSubmit={this.handleFormSubmit}/>
-        <h2>Contacts</h2>
-        <Filter filter={this.state.filter} handleFilter={this.handleFilter} />
-        <ContactList contacts={this.getFilteredContacts()} onDeleteBtn={this.onDeleteBtn} />
-
-      </div>
-    </>
-  );
-}
 }

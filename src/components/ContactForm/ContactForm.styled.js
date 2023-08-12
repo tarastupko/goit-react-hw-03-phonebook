@@ -1,36 +1,34 @@
 import styled from 'styled-components';
 
-export const Form = styled.form`
-  & div {
-  display: flex;
-  flex-direction: column;
-
-  padding: 10px 20px;
-  border: solid 3px black;
-  max-width: 400px;
-  }
-`
-
 export const Button = styled.button`
-    width: 100px;
-    padding: 5px 10px;
-    border: 1px solid black;
-    border-radius: 5px;
-    transition:  background-color 0.1s ease;
-  &:hover {
-    background-color: lightgrey;
-    
-  } &:active {
-    background-color: lightblue;
-    }
-`
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+`;
 
+export const Form = styled.form`
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 0 auto 20px; /* Центруємо форму горизонтально та додаємо знизу відступ */
+  max-width: 400px; /* Обмежуємо максимальну ширину форми */
+`;
 
 export const Input = styled.input`
-    max-width: 300px;
-    margin-bottom: 22px;
-    margin-top: 5px;
-    padding: 7px 10px;
-    border: 1px solid black;
-    background-color: transparent;
-`
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 95%;
+  margin-bottom: 10px;
+`;
+
+export const Label = styled.label`
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+`;
